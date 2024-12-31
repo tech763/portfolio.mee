@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #282c34;
+            color: #61dafb;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #20232a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .container h1 {
+            margin-bottom: 20px;
+        }
+
+        .container input {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .container button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #61dafb;
+            color: #20232a;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .container button:hover {
+            background-color: #21a1f1;
+            transform: scale(1.1);
+        }
+
+        .weather-info {
+            margin-top: 20px;
+        }
+
+        .weather-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+        <div class="weather-info" id="weather-info"></div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            const apiKey = 'c5f460e80d61e1e8599422375d0a64ec';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                if (data.cod === '404') {
+                    document.getElementById('weather-info').innerHTML = '<p>City not found. Please try again.</p>';
+                    return;
+                }
+
+                const weatherInfo = `
+                    <p><strong>City:</strong> ${data.name}</p>
+                    <p><strong>Temperature:</strong> ${data.main.temp}°C</p>
+                    <p><strong>Weather:</strong> ${data.weather[0].description}</p>
+                    <p><strong>Humidity:</strong> ${data.main.humidity}%</p>
+                    <p><strong>Wind Speed:</strong> ${data.wind.speed} m/s</p>
+                `;
+
+                document.getElementById('weather-info').innerHTML = weatherInfo;
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = '<p>Unable to fetch weather data. Please try again later.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

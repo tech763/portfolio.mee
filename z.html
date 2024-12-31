@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+        }
+        .display {
+            background-color: #fff
+            color: #fff;
+            font-size: 2em;
+            padding: 10px;
+            border-radius: 5px;
+            border-style: solid;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button.operator {
+            background-color: #28a745;
+        }
+        .button.operator:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="chooseOperation('/')">/</button>
+            <button class="button" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button operator" onclick="chooseOperation('*')">*</button>
+            <button class="button operator" onclick="calculateSquareRoot()">√</button>
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button operator" onclick="chooseOperation('-')">-</button>
+            <button class="button operator" onclick="appendNumber('^')">^</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="button" onclick="appendNumber('.')">.</button>
+            <button class="button operator" onclick="calculateResult()">=</button>
+            <button class="button operator" onclick="chooseOperation('+')">+</button>
+            <button class="button operator" onclick="appendNumber('π')">π</button>
+            <button class="button operator" onclick="calculateTrig('sin')">sin</button>
+            <button class="button operator" onclick="calculateTrig('cos')">cos</button>
+            <button class="button operator" onclick="calculateTrig('tan')">tan</button>
+            <button class="button operator" onclick="calculateTrig('asin')">asin</button>
+            <button class="button operator" onclick="calculateTrig('acos')">acos</button>
+            <button class="button operator" onclick="calculateTrig('atan')">atan</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentOperand = '';
+        let previousOperand = '';
+        let operation = undefined;
+
+        function appendNumber(number) {
+            if (number === '.' && currentOperand.includes('.')) return;
+            currentOperand = currentOperand.toString() + number.toString();
+            updateDisplay();
+        }
+
+        function chooseOperation(op) {
+            if (currentOperand === '') return;
+            if (previousOperand !== '') {
+                calculate();
+            }
+            operation = op;
+            previousOperand = currentOperand;
+            currentOperand = '';
+        }
+
+        function calculate() {
+            let result;
+            const prev = parseFloat(previousOperand);
+            const current = parseFloat(currentOperand);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                case '^':
+                    result = Math.pow(prev, current);
+                    break;
+                default:
+                    return;
+            }
+            currentOperand = result;
+            operation = undefined;
+            previousOperand = '';
+            updateDisplay();
+        }
+
+        function calculateSquareRoot() {
+            if (currentOperand === '') return;
+            currentOperand = Math.sqrt(parseFloat(currentOperand));
+            updateDisplay();
+        }
+
+        function calculateTrig(func) {
+            if (currentOperand === '') return;
+            let result;
+            const value = parseFloat(currentOperand);
+            switch (func) {
+                case 'sin':
+                    result = Math.sin(value);
+                    break;
+                case 'cos':
+                    result = Math.cos(value);
+                    break;
+                case 'tan':
+                    result = Math.tan(value);
+                    break;
+                case 'asin':
+                    result = Math.asin(value);
+                    break;
+                case 'acos':
+                    result = Math.acos(value);
+                    break;
+                case 'atan':
+                    result = Math.atan(value);
+                    break;
+                default:
+                    return;
+            }
+            currentOperand = result;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentOperand = '';
+            previousOperand = '';
+            operation = undefined;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.innerText = currentOperand;
+        }
+
+        function calculateResult() {
+            calculate();
+        }
+    </script>
+</body>
+</html>
